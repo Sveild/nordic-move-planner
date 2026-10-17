@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MovePlanner.Api.Validation;
 using MovePlanner.Application.Common;
 
 namespace MovePlanner.Api.Endpoints;
@@ -7,6 +8,10 @@ namespace MovePlanner.Api.Endpoints;
 /// Maps endpoints that bind an Api request, map it to an Application command or query, run the
 /// matching handler and turn the handler's result into an HTTP response.
 /// </summary>
+/// <remarks>
+/// Every mapped endpoint validates the request with the validator registered for the request type,
+/// if there is one, and answers an invalid request with a 400 problem response.
+/// </remarks>
 public static class HandlerEndpointExtensions
 {
     /// <summary>
@@ -31,7 +36,8 @@ public static class HandlerEndpointExtensions
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-        return endpoints.MapGet(pattern, HandleQueryAsync<TRequest, TQuery, TResponse>);
+        return endpoints.MapGet(pattern, HandleQueryAsync<TRequest, TQuery, TResponse>)
+            .AddEndpointFilter<ValidationFilter<TRequest>>();
     }
 
     /// <summary>
@@ -56,7 +62,8 @@ public static class HandlerEndpointExtensions
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-        return endpoints.MapPost(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>);
+        return endpoints.MapPost(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>)
+            .AddEndpointFilter<ValidationFilter<TRequest>>();
     }
 
     /// <summary>
@@ -81,7 +88,8 @@ public static class HandlerEndpointExtensions
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-        return endpoints.MapPut(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>);
+        return endpoints.MapPut(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>)
+            .AddEndpointFilter<ValidationFilter<TRequest>>();
     }
 
     /// <summary>
@@ -106,7 +114,8 @@ public static class HandlerEndpointExtensions
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-        return endpoints.MapDelete(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>);
+        return endpoints.MapDelete(pattern, HandleCommandAsync<TRequest, TCommand, TResponse>)
+            .AddEndpointFilter<ValidationFilter<TRequest>>();
     }
 
     private static async Task<IResult> HandleQueryAsync<TRequest, TQuery, TResponse>(

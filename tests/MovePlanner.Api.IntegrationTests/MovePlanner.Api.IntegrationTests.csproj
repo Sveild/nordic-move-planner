@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="FluentValidation" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="xunit.v3" />
